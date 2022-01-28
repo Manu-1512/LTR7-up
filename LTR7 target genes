@@ -1,0 +1,355 @@
+
+
+ awk 'NR>1{print $1,$2,$3,$4,$5,$6}' OFS="\t" primed_EP_CTCF_loops.txt | \
+ sort-bed - | \
+ intersectBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/Human_class2_TE.bed -wa -wb | \
+ grep -w 'LTR7' | \
+ awk '{print $4,$5,$6}' OFS="\t" | \
+ sort-bed - | \
+ mergeBed -i stdin | \
+ closestBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" | \
+ cut -f 7,9 | \
+ awk '{ if ($2 > -1000 && $2 < 1000) print $1}' | \
+ sort | \
+ uniq > LTR7_EP_first_CTCF_loop_genes.tsv
+
+
+awk 'NR>1{print $4,$5,$6,$1,$2,$3}' OFS="\t" primed_EP_CTCF_loops.txt | \
+ sort-bed - | \
+ intersectBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/Human_class2_TE.bed -wa -wb | \
+ grep -w 'LTR7' | \
+ awk '{print $4,$5,$6}' OFS="\t" | \
+ sort-bed - | \
+ mergeBed -i stdin | \
+ closestBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" | \
+ cut -f 7,9 | \
+ awk '{ if ($2 > -1000 && $2 < 1000) print $1}' | \
+ sort | \
+ uniq > LTR7_EP_second_CTCF_loop_genes.tsv
+ 
+ 
+  cat LTR7_EP_first_CTCF_loop_genes.tsv LTR7_EP_second_CTCF_loop_genes.tsv | \
+  sort | \
+  uniq > LTR7_EP_CTCF_loop_genes_primed.tsv 
+  
+   rm -rf LTR7_EP_first_CTCF_loop_genes.tsv
+   rm -rf LTR7_EP_second_CTCF_loop_genes.tsv
+  
+  
+  ###
+  
+  
+
+ awk 'NR>1{print $1,$2,$3,$4,$5,$6}' OFS="\t" primed_NOT_CTCF_loops.txt | \
+ sort-bed - | \
+ intersectBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/Human_class2_TE.bed -wa -wb | \
+ grep -w 'LTR7' | \
+ awk '{print $4,$5,$6}' OFS="\t" | \
+ sort-bed - | \
+ mergeBed -i stdin | \
+ closestBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" | \
+ cut -f 7,9 | \
+ awk '{ if ($2 > -1000 && $2 < 1000) print $1}' | \
+ sort | \
+ uniq > LTR7_EP_first_CTCF_loop_genes.tsv
+
+
+awk 'NR>1{print $4,$5,$6,$1,$2,$3}' OFS="\t" primed_NOT_CTCF_loops.txt | \
+ sort-bed - | \
+ intersectBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/Human_class2_TE.bed -wa -wb | \
+ grep -w 'LTR7' | \
+ awk '{print $4,$5,$6}' OFS="\t" | \
+ sort-bed - | \
+ mergeBed -i stdin | \
+ closestBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" | \
+ cut -f 7,9 | \
+ awk '{ if ($2 > -1000 && $2 < 1000) print $1}' | \
+ sort | \
+ uniq > LTR7_EP_second_CTCF_loop_genes.tsv
+ 
+ 
+  cat LTR7_EP_first_CTCF_loop_genes.tsv LTR7_EP_second_CTCF_loop_genes.tsv | \
+  sort | \
+  uniq > LTR7_not_CTCF_loop_genes_primed.tsv 
+  
+   rm -rf LTR7_EP_first_CTCF_loop_genes.tsv
+   rm -rf LTR7_EP_second_CTCF_loop_genes.tsv
+  
+  
+  #primed_NOT_CTCF_loops.txt
+  
+  ###
+ # Naive_NOT_CTCF_loops.txt
+ 
+ awk 'NR>1{print $1,$2,$3,$4,$5,$6}' OFS="\t" Naive_NOT_CTCF_loops.txt | \
+ sort-bed - | \
+ intersectBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/Human_class2_TE.bed -wa -wb | \
+ grep -w 'LTR7' | \
+ awk '{print $4,$5,$6}' OFS="\t" | \
+ sort-bed - | \
+ mergeBed -i stdin | \
+ closestBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" | \
+ cut -f 7,9 | \
+ awk '{ if ($2 > -1000 && $2 < 1000) print $1}' | \
+ sort | \
+ uniq > LTR7_EP_first_CTCF_loop_genes.tsv
+
+
+awk 'NR>1{print $4,$5,$6,$1,$2,$3}' OFS="\t" Naive_NOT_CTCF_loops.txt | \
+ sort-bed - | \
+ intersectBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/Human_class2_TE.bed -wa -wb | \
+ grep -w 'LTR7' | \
+ awk '{print $4,$5,$6}' OFS="\t" | \
+ sort-bed - | \
+ mergeBed -i stdin | \
+ closestBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" | \
+ cut -f 7,9 | \
+ awk '{ if ($2 > -1000 && $2 < 1000) print $1}' | \
+ sort | \
+ uniq > LTR7_EP_second_CTCF_loop_genes.tsv
+ 
+ 
+  cat LTR7_EP_first_CTCF_loop_genes.tsv LTR7_EP_second_CTCF_loop_genes.tsv | \
+  sort | \
+  uniq > LTR7_not_CTCF_loop_genes_Naive.tsv 
+  
+   rm -rf LTR7_EP_first_CTCF_loop_genes.tsv
+   rm -rf LTR7_EP_second_CTCF_loop_genes.tsv
+  
+  ######
+  #primed_CTCF_loops.txt
+  
+  
+  
+ awk 'NR>1{print $1,$2,$3,$4,$5,$6}' OFS="\t" primed_CTCF_loops.txt | \
+ sort-bed - | \
+ intersectBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/Human_class2_TE.bed -wa -wb | \
+ grep -w 'LTR7' | \
+ awk '{print $4,$5,$6}' OFS="\t" | \
+ sort-bed - | \
+ mergeBed -i stdin | \
+ closestBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" | \
+ cut -f 7,9 | \
+ awk '{ if ($2 > -1000 && $2 < 1000) print $1}' | \
+ sort | \
+ uniq > LTR7_EP_first_CTCF_loop_genes.tsv
+
+
+awk 'NR>1{print $4,$5,$6,$1,$2,$3}' OFS="\t" Naive_NOT_CTCF_loops.txt | \
+ sort-bed - | \
+ intersectBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/Human_class2_TE.bed -wa -wb | \
+ grep -w 'LTR7' | \
+ awk '{print $4,$5,$6}' OFS="\t" | \
+ sort-bed - | \
+ mergeBed -i stdin | \
+ closestBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" | \
+ cut -f 7,9 | \
+ awk '{ if ($2 > -1000 && $2 < 1000) print $1}' | \
+ sort | \
+ uniq > LTR7_EP_second_CTCF_loop_genes.tsv
+ 
+ 
+  cat LTR7_EP_first_CTCF_loop_genes.tsv LTR7_EP_second_CTCF_loop_genes.tsv | \
+  sort | \
+  uniq > LTR7_not_CTCF_loop_genes_Naive.tsv 
+  
+   rm -rf LTR7_EP_first_CTCF_loop_genes.tsv
+   rm -rf LTR7_EP_second_CTCF_loop_genes.tsv
+  
+  ####
+   awk 'NR>1{print $1,$2,$3,$4,$5,$6}' OFS="\t" primed_CTCF_loops.txt | sort-bed - | intersectBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/Human_class2_TE.bed -wa -wb |  grep -w 'LTR7' | awk '{print $4,$5,$6}' OFS="\t" | sort-bed - | mergeBed -i stdin | 
+  
+  ###
+   awk 'NR>1{print $4,$5,$6,$1,$2,$3}' OFS="\t" Naive_EP_CTCF_loops.txt | sort-bed - | intersectBed -a stdin -b  /workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_active.bed 
+/workdir/Manu/Data/for_Tommy/3_D
+
+
+awk 'NR>1{print $1,$2,$3,$4,$5,$6}' OFS="\t" primed_EP_CTCF_loops.txt | sort-bed - | intersectBed -a stdin -b  /workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_inactive.bed | awk '{print $4,$5,$6}' OFS="\t" | sort-bed - |  mergeBed -i stdin |  closestBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  cut -f 7,9 |  awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  sort | uniq > primed_EP_CTCF_loops_Inactive_target_second.tsv
+
+awk 'NR>1{print $4,$5,$6,$1,$2,$3}' OFS="\t" primed_EP_CTCF_loops.txt | sort-bed - | intersectBed -a stdin -b  /workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_active.bed | awk '{print $4,$5,$6}' OFS="\t" | sort-bed - |  mergeBed -i stdin |  closestBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  cut -f 7,9 |  awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  sort | uniq > primed_EP_CTCF_loops_active_target_first.tsv
+awk 'NR>1{print $1,$2,$3,$4,$5,$6}' OFS="\t" primed_EP_CTCF_loops.txt | sort-bed - | intersectBed -a stdin -b  /workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_active.bed | awk '{print $4,$5,$6}' OFS="\t" | sort-bed - |  mergeBed -i stdin |  closestBed -a stdin -b /workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  cut -f 7,9 |  awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  sort | uniq > primed_EP_CTCF_loops_active_target_second.tsv
+
+
+
+##
+
+
+awk 'NR>1{print $4,$5,$6,$1,$2,$3}' OFS="\t" primed_EP_CTCF_loops.txt | sort-bed - | \
+intersectBed -a stdin -b  \
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_inactive.bed | \
+awk '{print $4,$5,$6}' OFS="\t" | sort-bed - |  \
+mergeBed -i stdin |  \
+closestBed -a stdin -b \
+/workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  \
+cut -f 7,9 |  \
+awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  \
+sort | uniq > \
+primed_EP_CTCF_loops_Inactive_target_first.tsv
+
+
+awk 'NR>1{print $1,$2,$3,$4,$5,$6}' OFS="\t" primed_EP_CTCF_loops.txt | sort-bed - | \
+intersectBed -a stdin -b  \
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_inactive.bed | \
+awk '{print $4,$5,$6}' OFS="\t" | sort-bed - |  \
+mergeBed -i stdin |  closestBed -a stdin -b \
+/workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  \
+cut -f 7,9 |  awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  sort | \
+uniq > primed_EP_CTCF_loops_Inactive_target_second.tsv
+
+
+cat primed_EP_CTCF_loops_Inactive_target_* > primed_EP_CTCF_loops_Inactive_targets.tsv
+rm -rf primed_EP_CTCF_loops_Inactive_target_*
+
+
+awk 'NR>1{print $4,$5,$6,$1,$2,$3}' OFS="\t" primed_EP_CTCF_loops.txt | sort-bed - | \
+intersectBed -a stdin -b  \
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_active.bed | \
+awk '{print $4,$5,$6}' OFS="\t" | sort-bed - |  \
+mergeBed -i stdin |  closestBed -a stdin -b \
+/workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  \
+cut -f 7,9 |  \
+awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  sort | \
+uniq > primed_EP_CTCF_loops_active_target_first.tsv
+
+
+awk 'NR>1{print $1,$2,$3,$4,$5,$6}' OFS="\t" primed_EP_CTCF_loops.txt | sort-bed - | \
+intersectBed -a stdin -b  \
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_active.bed | \
+awk '{print $4,$5,$6}' OFS="\t" | sort-bed - |  \
+mergeBed -i stdin |  closestBed -a stdin -b \
+/workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" | \
+ cut -f 7,9 |  awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  \
+ sort | uniq > primed_EP_CTCF_loops_active_target_second.tsv
+cat primed_EP_CTCF_loops_active_target_* > \
+primed_EP_CTCF_loops_active_target.tsv
+
+
+rm -rf primed_EP_CTCF_loops_active_target_*
+cat primed_EP_CTCF_loops_active_target.tsv 
+
+
+awk 'NR>1{print $4,$5,$6,$1,$2,$3}' OFS="\t" Naive_EP_CTCF_loops.txt | sort-bed - | \
+intersectBed -a stdin -b  \
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_inactive.bed | \
+awk '{print $4,$5,$6}' OFS="\t" | sort-bed - |  \
+mergeBed -i stdin |  closestBed -a stdin -b \
+/workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  \
+cut -f 7,9 |  awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  sort | 
+uniq > Naive_EP_CTCF_loops_Inactive_target_first.tsv
+
+awk 'NR>1{print $1,$2,$3,$4,$5,$6}' OFS="\t" Naive_EP_CTCF_loops.txt | sort-bed - | \
+intersectBed -a stdin -b  \
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_inactive.bed | \
+awk '{print $4,$5,$6}' OFS="\t" | sort-bed - |  \
+mergeBed -i stdin |  closestBed -a stdin -b \
+/workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  \
+cut -f 7,9 |  awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  sort | \
+uniq > Naive_EP_CTCF_loops_Inactive_target_second.tsv
+
+cat Naive_EP_CTCF_loops_Inactive_target_*
+
+cat Naive_EP_CTCF_loops_Inactive_target_* > Naive_EP_CTCF_loops_Inactive_targets.tsv
+
+rm -rf Naive_EP_CTCF_loops_Inactive_target_*
+
+awk 'NR>1{print $4,$5,$6,$1,$2,$3}' OFS="\t" Naive_EP_CTCF_loops.txt | sort-bed - \
+| intersectBed -a stdin -b  \
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_active.bed | \
+awk '{print $4,$5,$6}' OFS="\t" | sort-bed - |  \
+mergeBed -i stdin |  closestBed -a stdin -b \
+/workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  \
+cut -f 7,9 |  \
+awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  \
+sort | uniq > \
+Naive_EP_CTCF_loops_active_target_first.tsv
+
+
+
+awk 'NR>1{print $1,$2,$3,$4,$5,$6}' OFS="\t" Naive_EP_CTCF_loops.txt | sort-bed - \
+| intersectBed -a stdin -b  \
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_active.bed | \
+awk '{print $4,$5,$6}' OFS="\t" | sort-bed - |  \
+mergeBed -i stdin |  \
+closestBed -a stdin -b \
+/workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  \
+cut -f 7,9 |  \
+awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  sort | \
+uniq > Naive_EP_CTCF_loops_active_target_second.tsv
+
+cat Naive_EP_CTCF_loops_active_target_* > Naive_EP_CTCF_loops_active_target.tsv
+
+rm -rf Naive_EP_CTCF_loops_active_target_*
+
+
+awk 'NR>1{print $4,$5,$6,$1,$2,$3}' OFS="\t" Naive_NOT_CTCF_loops.txt | \
+sort-bed - | intersectBed -a stdin -b  \
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_inactive.bed | \
+awk '{print $4,$5,$6}' OFS="\t" | sort-bed - \
+|  mergeBed -i stdin |  closestBed -a stdin -b \
+/workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  
+cut -f 7,9 |  \
+awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  \
+sort | uniq > Naive_NOT_CTCF_loops_Inactive_target_first.tsv
+
+awk 'NR>1{print $1,$2,$3,$4,$5,$6}' OFS="\t" Naive_NOT_CTCF_loops.txt | \
+sort-bed - | intersectBed -a stdin -b  \
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_inactive.bed | \
+awk '{print $4,$5,$6}' OFS="\t" | sort-bed - |  \
+mergeBed -i stdin |  closestBed -a stdin -b \
+/workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  \
+cut -f 7,9 |  awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  sort | \
+uniq > Naive_NOT_CTCF_loops_Inactive_target_second.tsv
+
+
+
+cat Naive_NOT_CTCF_loops_Inactive_target_* > Naive_NOT_CTCF_loops_Inactive_targets.tsv
+
+rm -rf Naive_NOT_CTCF_loops_Inactive_target_*
+
+awk 'NR>1{print $4,$5,$6,$1,$2,$3}' OFS="\t" Naive_NOT_CTCF_loops.txt | \
+sort-bed - | intersectBed -a stdin -b  \
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_active.bed | \
+awk '{print $4,$5,$6}' OFS="\t" | sort-bed - |  mergeBed -i stdin |  \
+closestBed -a stdin -b \
+/workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  \
+cut -f 7,9 |  awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  sort | \
+uniq > Naive_NOT_CTCF_loops_active_target_first.tsv
+
+awk 'NR>1{print $1,$2,$3,$4,$5,$6}' OFS="\t" Naive_NOT_CTCF_loops.txt | \
+sort-bed - | intersectBed -a stdin -b  \
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_active.bed | \
+awk '{print $4,$5,$6}' OFS="\t" | sort-bed - |  \
+mergeBed -i stdin |  closestBed -a stdin -b \
+/workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  \
+cut -f 7,9 |  awk '{ if ($2 > -1000 && $2 < 1000) print $1}' |  sort | \
+uniq > Naive_NOT_CTCF_loops_active_target_second.tsv
+
+cat Naive_NOT_CTCF_loops_active_target_* > Naive_NOT_CTCF_loops_active_target.tsv
+
+rm -rf Naive_NOT_CTCF_loops_active_target_*
+
+cat Naive_NOT_CTCF_loops_active_target.tsv 
+
+
+
+awk 'NR>1{print $1,$2,$3}' OFS="\t" SMC1_ChIA_PET_Naive.txt| sort-bed - | \
+intersectBed -a stdin -b  \
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_inactive.bed | \
+sort-bed - |  mergeBed -i stdin |  \
+closestBed -a stdin -b \
+/workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  \
+cut -f 7,9 | \
+ awk '{ if ($2 > -20000 && $2 < 20000) print $1}' |  \
+ sort | uniq > \
+ Naive_SMC1_ChIA_PET_Inactive_target.tsv
+
+
+awk 'NR>1{print $1,$2,$3}' OFS="\t" SMC1_ChIA_PET_Naive.txt| sort-bed - | \
+intersectBed -a stdin -b  \
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/LTR7_hESC_active.bed | \
+sort-bed - |  mergeBed -i stdin |  \
+closestBed -a stdin -b \
+/workdir/Manu/Homo_Genome/Genome/bed_files/hg19_genes_TSS.bed -D "b" |  \
+cut -f 7,9 |  \
+awk '{ if ($2 > -20000 && $2 < 20000) print $1}' |  sort | \
+uniq > Naive_SMC1_ChIA_PET_active_target.tsv
