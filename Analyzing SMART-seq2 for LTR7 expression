@@ -1,0 +1,110 @@
+
+
+##########  Making the gtf file containing genes and LTR7 sequences and coordinates
+######### this directory contains 11 bed files, each with the LTR7 subfamilies
+
+#hg19_LTR7B_full_length.bed
+#hg19_LTR7BC_full_length.bed
+#hg19_LTR7O_full_length.bed
+#hg19_LTR7UP1_full_length.bed
+#hg19_LTR7UP2_full_length.bed
+#hg19_LTR7C_full_length.bed
+#hg19_LTR7D1_full_length.bed
+#hg19_LTR7D2_full_length.bed
+#hg19_LTR7U1_full_length.bed
+#hg19_LTR7U2_full_length.bed
+#hg19_LTR7Y_full_length.bed
+
+for i in *bed; 
+              do awk '{print $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,"LTR7B_full",$12,$13}' \
+              "$i" | \
+               awk '{sub($11, "\"&\";"); print}' > Curated_"$i"
+            done
+mkdir curated/
+
+mv -v Curated_LTR7* curated/
+cd curated/
+
+cat /workdir/Manu/Homo_Genome/Genome/bed_files/genes.bed | \
+awk '{print $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$14,$15}'  > Curated_genes.bed
+
+cat Curated_* | sort-bed - > Genes_LTR7_full.bed
+
+awk \
+'{print \
+$1"\t"$7"\t"$8"\t"($2+1)"\t"$3"\t"$5"\t"$6"\t"$9"\t"(substr($0, index($0,$10)))}' \
+Genes_LTR7_full.bed > Genes_LTR7_full.gtf
+
+
+
+
+################### Here, creating the STAR indices 
+
+
+
+/home/msingh/RNAseq/Monkey/Genome/Marmoset/STAR_Genome_dir
+#!/bin/bash
+#$ -pe smp 4
+#$ -l mem_free=20.5G,h_vmem=24G
+#$ -e errorstar.txt
+#$ -o outstar.txt
+#$ -cwd
+
+
+
+
+
+############### Human
+
+echo "/programs/STAR/STAR --runMode genomeGenerate --genomeSAsparseD 1 --genomeSAindexNbases 14 \
+--limitGenomeGenerateRAM 20000000000 --genomeDir  \
+/home/msingh/RNAseq/Homo/STAR_Genome_dir \
+--genomeFastaFiles \
+/home/msingh/RNAseq/Homo/Genome/bowtie2_index/hg19.fa \
+--runThreadN 4 --sjdbGTFfile \
+Genes_LTR7_full.gtf \
+--sjdbOverhang 74" > Homo_genome_star_build
+
+
+
+######################### Running STAR for mapping SMART-seq2 
+
+/programs/STAR/STAR --genomeLoad LoadAndExit --genomeDir /workdir/Manu/Homo_Genome/STAR_Genome_dir
+for i in $(ls ./ERR*fastq.gz | \
+           sed s/_R[12]_001.fastq.gz// | \
+           sort -u); \      
+                 do /programs/STAR/STAR  \
+                    --genomeDir /workdir/Manu/Homo_Genome/STAR_Genome_dir \
+                    --readFilesCommand zcat \
+                    --readFilesIn ${i}_R1_001.fastq.gz ${i}_R2_001.fastq.gz \
+                    --runThreadN 4 --alignIntronMin 0 \
+                    --alignIntronMax 1000000 \
+                    --chimSegmentMin 15 --chimJunctionOverhangMin 15 \
+                    --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0  \
+                    --seedSearchStartLmax 30 --outFilterMatchNmin 50 \
+                    --clip3pNbases 2 --outFilterMultimapNmax 20 \
+                    --outFileNamePrefix "$i"_ \
+                    --outSAMtype BAM SortedByCoordinate; \
+                 done
+
+mkdir bam_files
+mv -v *bam bam_files/
+
+cd bam_files/
+
+            
+##### Calculating gene and LTR7 level counts                    
+for i in $(ls ./*_Aligned.sortedByCoord.out.bam | \
+            sed s/_Aligned.sortedByCoord.out.bam// | \
+            sort -u); 
+                    do featureCounts \
+                         -T 2 -t exon \
+                         -g gene_id -a \
+                         Genes_LTR7_full.gtf \
+                         -o "$i"_genes.tsv \
+                         ${i}_Aligned.sortedByCoord.out.bam; \
+                    done
+
+
+
+ 
