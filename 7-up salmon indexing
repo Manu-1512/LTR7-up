@@ -1,0 +1,59 @@
+###############
+
+# ====================================
+# Author:Manu Singh 20 March 2020
+# ms3559@cornell.edu
+# =====================================
+# Set Enviornment variables as per the .bash_profiles on the system
+# =====================================
+
+#first we are dealing with LTR7 coordinates of human genome, different subfamilies have unique identifiers in fourth coloumn.
+# the file name is  "LTR7_subfamilies_hg19.bed"
+#LTR7_subfamilies_hg19.bed file looks like following
+
+#chr1	start	end	LTR7Y	1118.000000	-	hg19_rmsk	exon	.	gene_id "LTR7Y"; transcript_id "LTR7Y_dup1"; 
+#chr5	start	end	LTR7Y	1118.000000	-	hg19_rmsk	exon	.	gene_id "LTR7Y"; transcript_id "LTR7Y_dup2"; 
+
+# the full bed files are available on request 
+
+#Here we are going to  make a combined gtf file containing these LTR7 subfamilies and gene from human hg19 sequences
+
+# First step to create an ID for each sequences, which we could fetch later for the integrative kinds of analysis
+ 
+cut -f 2 LTR7_subfamilies_hg19.bed -d ";" | cut -f3 -d " " | sed 's/"//g' > LTR7_subfamilies_hg19_transID.txt
+
+## Here, we add the prefix "TELONG", so that we can fetch TEs from mixed data later
+
+paste LTR7_subfamilies_hg19.bed LTR7_subfamilies_hg19_transID.txt | awk '{print $1,$2,$3,"TELONG-"$14,$5,$6}' OFS="\t" > LTR7_subfamilies_hg19_ID.bed
+
+awk '{print $1,$2,$3,$4"-"$1"-"$2"-"$3,$5,$6}' OFS="\t" LTR7_subfamilies_hg19_ID.bed > LTR7_subfamilies_hg19_IDv2.bed
+
+bedtools getfasta -fi hg19.fa -bed LTR7_subfamilies_hg19_IDv2.bed -s -name | awk '{ print toupper($0) }' | sed 's/(+)\|(-)//g'  > LTR7_subfamilies_hg19_ID.fa
+
+bedtools maskfasta -fi hg19.fa -bed LTR7_subfamilies_hg19_ID.bed -fo hg19_masked.fa
+
+
+#above commands have given the fasta files of LTR7 subfamilies, where the headers can be split to gain any information from TEs as given above
+
+
+
+# Now let's deal with genes 
+#This is mart export file, downlaoded from UCSC, with following Genes coordinates
+#file name is "mart_export.txt" 
+#ENSG00000229483	13	23743974	23744736	-1	LINC00362
+
+
+awk 'NR>1{if($5=="1") print "chr"$2,$3,$4,$6"_"$1,$1,"+"; else print "chr"$2,$3,$4,$6"_"$1,$1,"-"}' OFS="\t" mart_export.txt  > hg19_Genes.bed
+
+
+
+bedtools getfasta -fi hg19_masked.fa -bed hg19_Genes.bed -s -name | awk '{ print toupper($0) }' | sed 's/(+)\|(-)//g'  > hg19_Genes.fa
+
+cat hg19_Genes.fa LTR7_subfamilies_hg19_ID.fa > hg19_Genes_LTR7_ID.fa
+
+grep ">" hg19_Genes_LTR7_ID.fa | sed 's/>//g' | awk '{print $1,$1}' OFS="\t" > txp2gene.tsv
+
+
+/programs/salmon-1.2.1/bin/salmon index -t hg19_Genes_LTR7_ID.fa -i Genes_TEindex -k 31
+
+########
