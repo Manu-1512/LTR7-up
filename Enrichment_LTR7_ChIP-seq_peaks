@@ -1,0 +1,160 @@
+#Manu Singh 5 April 2021
+#Run regionR to get sinificant values for family. The idea is to check if the peaks are enriched in a family.
+
+set.seed(786)
+setwd("/data/Manu/Manu_LTR7_Sig_Family_regionR/")
+
+
+.libPaths( c( "/home/Manu/Rlib/", .libPaths()) )
+#BiocManager::install("regioneR")
+#BiocManager::install("BSgenome.Hsapiens.UCSC.hg19")
+
+library("regioneR")
+
+
+Human_class2_LTR7s <- read.delim("LTR7_subgroups_hg19.bed", stringsAsFactors = F, header=F)
+
+
+
+All_Peaks <- read.delim("Peaks_TF_binding_hg19.bed", stringsAsFactors = F, header=F)
+All_Peaks_GR <- toGRanges(All_Peaks)
+
+Total_LTR7s_family <- (unique(Human_class2_LTR7s$V4))
+Total_LTR7s_familyDF <- as.data.frame(Total_LTR7s_family)
+Total_LTR7s_familyDF$Pvalue <- 1
+
+Save_Model_Also <- list()
+  for(numfam in 1:length(Total_LTR7s_family)){
+    
+    cat("Family Number", numfam, Total_LTR7s_family[numfam],"\n")
+    Take_one_family <- Human_class2_LTR7s[(Human_class2_LTR7s$V4%in%Total_LTR7s_family[numfam]),]
+    
+    Take_one_familyV2 <- Take_one_family[(((Take_one_family[,1]))%in%unlist(unique(All_Peaks[,1]))),]
+    
+    
+    Take_one_familyV2_GR <- toGRanges(Take_one_familyV2)
+    
+    
+    Human_class2_LTR7sV2 <- Human_class2_LTR7s[(((Human_class2_LTR7s[,1]))%in%unlist(unique(All_Peaks[,1]))),]
+    Human_class2_LTR7s_GR <- toGRanges(Human_class2_LTR7sV2)
+    
+    
+    #numOverlaps(Take_one_familyV2_GR, All_Peaks_GR)
+    
+    #random.RS <- resampleRegions(Take_one_familyV2_GR, universe=Human_class2_LTR7s_GR)
+    
+    
+    pt <- permTest(A=Take_one_familyV2_GR, ntimes=1000, randomize.function=resampleRegions, universe=Human_class2_LTR7s_GR,
+                   evaluate.function=numOverlaps, B=All_Peaks_GR, verbose=FALSE, alternative = "greater")
+    Total_LTR7s_familyDF[numfam,2] <- pt$numOverlaps$pval
+    Save_Model_Also[[numfam]] <- pt
+  
+  }
+Total_LTR7s_familyDF$FDRPvalue <- p.adjust(Total_LTR7s_familyDF$Pvalue,method="fdr")
+  saveRDS(Total_LTR7s_familyDF,file="Total_LTR7s_familyDF.rds")
+  saveRDS(Save_Model_Also,file="Save_Model_Also.rds")
+
+  write.table(Total_LTR7s_familyDF,file="Total_LTR7s_familyDF.txt",sep="\t", quote = F, row.names = F)
+  
+  
+  
+  
+  ##try with only peaks on TE
+  
+  All_Peaks <- read.delim("TE_All_other_EGR1_peaks.bed", stringsAsFactors = F, header=F)
+  All_Peaks_GR <- toGRanges(All_Peaks)
+  
+  Total_LTR7s_family <- (unique(Human_class2_LTR7s$V4))
+  Total_LTR7s_familyDF <- as.data.frame(Total_LTR7s_family)
+  Total_LTR7s_familyDF$Pvalue <- 1
+  
+  Save_Model_Also <- list()
+  for(numfam in 1:length(Total_LTR7s_family)){
+    
+    cat("Family Number", numfam, Total_LTR7s_family[numfam],"\n")
+    Take_one_family <- Human_class2_LTR7s[(Human_class2_LTR7s$V4%in%Total_LTR7s_family[numfam]),]
+    
+    Take_one_familyV2 <- Take_one_family[(((Take_one_family[,1]))%in%unlist(unique(All_Peaks[,1]))),]
+    
+    
+    Take_one_familyV2_GR <- toGRanges(Take_one_familyV2)
+    
+    
+    Human_class2_LTR7sV2 <- Human_class2_LTR7s[(((Human_class2_LTR7s[,1]))%in%unlist(unique(All_Peaks[,1]))),]
+    Human_class2_LTR7s_GR <- toGRanges(Human_class2_LTR7sV2)
+    
+    
+    #numOverlaps(Take_one_familyV2_GR, All_Peaks_GR)
+    
+    #random.RS <- resampleRegions(Take_one_familyV2_GR, universe=Human_class2_LTR7s_GR)
+    
+    
+    pt <- permTest(A=Take_one_familyV2_GR, ntimes=1000, randomize.function=resampleRegions, universe=Human_class2_LTR7s_GR,
+                   evaluate.function=numOverlaps, B=All_Peaks_GR, verbose=FALSE, alternative = "greater", force.parallel = TRUE)
+    Total_LTR7s_familyDF[numfam,2] <- pt$numOverlaps$pval
+    Save_Model_Also[[numfam]] <- pt
+    
+  }
+  
+  
+  Total_LTR7s_familyDF$FDRPvalue <- p.adjust(Total_LTR7s_familyDF$Pvalue,method="fdr")
+  saveRDS(Total_LTR7s_familyDF,file="Total_LTR7s_familyDF_OnlyTakingTEpeaks.rds")
+  saveRDS(Save_Model_Also,file="Save_Model_Also_OnlyTakingTEpeaks.rds")
+  
+  
+  
+  
+  
+  
+  ##try with randomization of regions from whole genome
+
+  #BiocManager::install("BSgenome.Hsapiens.UCSC.hg19")
+  All_Peaks <- read.delim("All_other_EGR1_peaks.bed", stringsAsFactors = F, header=F)
+  All_Peaks_GR <- toGRanges(All_Peaks)
+  
+  
+  human.genome <- getGenomeAndMask("hg19", mask=NA)$genome
+
+  human.chrs <- filterChromosomes(human.genome, keep.chr=unlist(unique(All_Peaks[,1])))
+  
+  
+  
+  Total_LTR7s_family <- (unique(Human_class2_LTR7s$V4))
+  Total_LTR7s_familyDF <- as.data.frame(Total_LTR7s_family)
+  Total_LTR7s_familyDF$Pvalue <- 1
+  
+  Save_Model_Also <- list()
+  for(numfam in 1:length(Total_LTR7s_family)){
+    
+    cat("Family Number", numfam, Total_LTR7s_family[numfam],"\n")
+    Take_one_family <- Human_class2_LTR7s[(Human_class2_LTR7s$V4%in%Total_LTR7s_family[numfam]),]
+    
+    Take_one_familyV2 <- Take_one_family[(((Take_one_family[,1]))%in%unlist(unique(All_Peaks[,1]))),]
+    
+    
+    Take_one_familyV2_GR <- toGRanges(Take_one_familyV2)
+    
+    
+    Human_class2_LTR7sV2 <- Human_class2_LTR7s[(((Human_class2_LTR7s[,1]))%in%unlist(unique(All_Peaks[,1]))),]
+    Human_class2_LTR7s_GR <- toGRanges(Human_class2_LTR7sV2)
+    
+    
+    #numOverlaps(Take_one_familyV2_GR, All_Peaks_GR)
+    
+    #random.RS <- resampleRegions(Take_one_familyV2_GR, universe=Human_class2_LTR7s_GR)
+    
+    
+    pt <- permTest(A=Take_one_familyV2_GR, ntimes=1000, randomize.function=randomizeRegions, genome=human.chrs,
+                   evaluate.function=numOverlaps, B=All_Peaks_GR, verbose=FALSE, alternative = "greater", force.parallel = TRUE)
+    Total_LTR7s_familyDF[numfam,2] <- pt$numOverlaps$pval
+    Save_Model_Also[[numfam]] <- pt
+    
+  }
+  
+  Total_LTR7s_familyDF$FDRPvalue <- p.adjust(Total_LTR7s_familyDF$Pvalue,method="fdr")
+  saveRDS(Total_LTR7s_familyDF,file="Total_LTR7s_familyDF_TakingGenomehg19ForRandomization.rds")
+  saveRDS(Save_Model_Also,file="Save_Model_Also_TakingGenomehg19ForRandomization.rds")
+  
+  
+  
+  
