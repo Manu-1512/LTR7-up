@@ -1,0 +1,84 @@
+### The directory has all the LTR7 subfamilies genomic coordinates in bed format
+## the fourth coloumn is family name, fifth is filler and sixth is strand
+
+
+for i in *bed; do awk '{if ($6=="+") print $1,$2-2000,$2+8000,$4,$5,$6; else print $1,$3-8000,$3+2000,$4,$5,$6}' OFS="\t" "$i" | sort-bed - > extendend_windows/sorted_"$i"; done
+for i in *bed; do awk '{if ($6=="+") print $1,$2-2000,$2+8000,$4,$5,$6; else print $1,$3-8000,$3+2000,$4,$5,$6}' OFS="\t" "$i" | sort-bed - > extendend_windows/sorted_"$i"; done
+for i in *; do awk '{print $1,$2,$3,$6,$4}' OFS="\t" "$i" > formated_"$i"; done
+for i in *; do awk 'BEGIN { binNum=100; } { chr=$1; start=$2; stop=$3; binIdx=1; binSize=(stop-start)/binNum; for (i=start;i<stop;i+=binSize) { print chr"\t"i"\t"(i+binSize)"\t"binIdx"\t"$4"\t"$5; binIdx++; } }' "$i" > bins_"$i"; done
+
+cp -v bins_formated_sorted_* /scratch/AG_Izsvak/DNAse_seq/ATAC_raw/raw/macs2_out/bedGraph/
+cd /scratch/AG_Izsvak/DNAse_seq/ATAC_raw/raw/macs2_out/bedGraph/
+ls
+mkdir nm_bedGraph
+mv -v *nm_treat* nm_bedGraph/
+cp -v bins_formated_sorted_* nm_bedGraph/
+cd nm_bedGraph/
+for i in *.bdg; do awk '{print $1,$2,$3,"ID",$4}' OFS="\t" "$i" | sort-bed - > Signal_"$i"; done
+
+for i in Signal*.bdg; do ~/tools/bin/bedmap --sum --prec 0 bins_formated_sorted_LTR5_Hs.bed "$i" > LTR5_Hs_"$i"_count; done
+
+for i in Signal*.bg; do ~/tools/bin/bedmap --sum --prec 0 bins_Active_L1.bed "$i" > Active_L1_"$i"_count; done
+
+for i in Signal*.bg; do ~/tools/bin/bedmap --sum --prec 0 bins_Hot_L1.bed "$i" > Hot_L1_"$i"_count; done
+
+for i in Signal*.bg; do ~/tools/bin/bedmap --sum --prec 0 bins_formated_sorted_SVA.bed "$i" > SVA_"$i"_count; done
+
+
+bins_Active_L1.bed  bins_formated_sorted_SVA.bed  bins_Hot_L1.bed
+
+
+bedGraph
+
+for i in *.bedGraph; do awk '{print $1,$2,$3,"ID",$4}' OFS="\t" "$i" | sort-bed - > Signal_"$i"; done
+
+
+
+for i in Signal*.bedGraph; do bedmap --sum --prec 0 /workdir/Manu/Data/for_Tommy/LTR_files/bins_LTR7_solo_10KB_ext.bed "$i" > LTR7_solo_"$i"_count; done
+/workdir/Manu/Data/for_Tommy/LTR_files/bins_LTR7_left_boundary_10KB_ext.bed
+
+
+for i in Signal*.bedGraph; do bedmap --sum --prec 0 /workdir/Manu/Data/for_Tommy/LTR_files/bins_LTR7_left_boundary_10KB_ext.bed "$i" > LTR7_left/LTR7_left_"$i"_count; done
+
+
+for i in Signal*.bedGraph; do bedmap --sum --prec 0 /workdir/Manu/Data/for_Tommy/LTR_files/bins_LTR7_right_boundary_10KB_ext.bed "$i" > LTR7_right/LTR7_right_"$i"_count; done
+
+
+
+for i in *2KB_ext.bed; do awk \
+'BEGIN { binNum=100; } { chr=$1; start=$2; \
+stop=$3; binIdx=1; binSize=(stop-start)/binNum; \
+for (i=start;i<stop;i+=binSize) \
+{ print chr"\t"i"\t"(i+binSize)"\t"binIdx"\t"$4"\t"$5; binIdx++; } }' \
+"$i" > bins_"$i"; done
+
+
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/bins_LTR7_hESC_active_2KB_ext.bed
+
+/workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/bins_LTR7_hESC_inactive_2KB_ext.bed
+
+
+for i in Signal*.bedGraph; do bedmap --sum --prec 0 /workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/bins_LTR7_hESC_active_2KB_ext.bed "$i" > /workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/bins_LTR7_hESC_active_2KB_ext_"$i"_count; done
+
+for i in Signal*.bedGraph; do bedmap --sum --prec 0 /workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/bins_LTR7_hESC_inactive_2KB_ext.bed "$i" > /workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/bins_LTR7_hESC_inactive_2KB_ext_"$i"_count; done
+
+
+
+
+
+for i in *bed; do bedmap --sum --prec 0 "$i"  Signal_FOXP1_hESC.bedGraph > FOXP1_"$i"_count; done
+
+
+for i in Signal*.bedGraph; do bedmap --sum --prec 0 /workdir/Manu/Data/for_Tommy/LTR_files/bins_LTR7_right_boundary_10KB_ext.bed "$i" > LTR7_right/LTR7_right_"$i"_count; done
+
+
+
+for i in Signal*.bedGraph; do bedmap --sum --prec 0 /workdir/Manu/Data/for_Tommy/LTR_files/bins_LTR7_right_boundary_10KB_ext.bed "$i" > Active_vs_Inactive/LTR7_right_"$i"_count; done
+
+
+
+
+for i in Signal*.bedGraph; do bedmap --sum --prec 0 /workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/bins_LTR7_hESC_active_2KB_ext.bed "$i" > /workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/bins_LTR7_active_2KB_ext_"$i"_count; done
+
+for i in Signal*.bedGraph; do bedmap --sum --prec 0 /workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/bins_LTR7_hESC_inactive_2KB_ext.bed "$i" > /workdir/Manu/Data/for_Tommy/LTR_files/Tommy_list/bins_LTR7_inactive_2KB_ext_"$i"_count; done
+
