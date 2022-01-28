@@ -353,3 +353,16 @@ closestBed -a stdin -b \
 cut -f 7,9 |  \
 awk '{ if ($2 > -20000 && $2 < 20000) print $1}' |  sort | \
 uniq > Naive_SMC1_ChIA_PET_active_target.tsv
+
+R
+
+df <- read.delim("Naive_SMC1_ChIA_PET_active_target.tsv", row.names=1, header=T, stringsAsFactor=F)
+
+png("distance_between_interactions2.png",  width = 14.7, height = 12.8, units = "cm", res = 600, pointsize = 12)
+hist(df,
+     col="lightblue",
+     freq = TRUE)
+lines(density(df),
+      col="red",
+      lwd=2)
+     
