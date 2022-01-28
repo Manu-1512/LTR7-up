@@ -61,7 +61,7 @@ Total_LTR7s_familyDF$FDRPvalue <- p.adjust(Total_LTR7s_familyDF$Pvalue,method="f
   
   ##try with only peaks on TE
   
-  All_Peaks <- read.delim("TE_All_other_EGR1_peaks.bed", stringsAsFactors = F, header=F)
+  All_Peaks <- read.delim("TE_Peaks_TF_binding.bed", stringsAsFactors = F, header=F)
   All_Peaks_GR <- toGRanges(All_Peaks)
   
   Total_LTR7s_family <- (unique(Human_class2_LTR7s$V4))
@@ -109,7 +109,7 @@ Total_LTR7s_familyDF$FDRPvalue <- p.adjust(Total_LTR7s_familyDF$Pvalue,method="f
   ##try with randomization of regions from whole genome
 
   #BiocManager::install("BSgenome.Hsapiens.UCSC.hg19")
-  All_Peaks <- read.delim("All_other_EGR1_peaks.bed", stringsAsFactors = F, header=F)
+  All_Peaks <- read.delim("All_Peaks_TF_bindings.bed", stringsAsFactors = F, header=F)
   All_Peaks_GR <- toGRanges(All_Peaks)
   
   
@@ -154,6 +154,7 @@ Total_LTR7s_familyDF$FDRPvalue <- p.adjust(Total_LTR7s_familyDF$Pvalue,method="f
   Total_LTR7s_familyDF$FDRPvalue <- p.adjust(Total_LTR7s_familyDF$Pvalue,method="fdr")
   saveRDS(Total_LTR7s_familyDF,file="Total_LTR7s_familyDF_TakingGenomehg19ForRandomization.rds")
   saveRDS(Save_Model_Also,file="Save_Model_Also_TakingGenomehg19ForRandomization.rds")
+  
   
   
   
