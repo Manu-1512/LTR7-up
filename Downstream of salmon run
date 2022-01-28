@@ -1,0 +1,70 @@
+mkdir salmon
+
+for i in quants/*/quant.sf; do  mv "$i" "salmon/$(basename -- "$(dirname -- "$i")").tsv"; done
+
+cd salmon/
+
+R
+file_names <- dir() #where you have your files
+file_names
+data_frame <- do.call(cbind,lapply(file_names,read.delim, header=T))
+
+row.names(data_frame) <- data_frame[,1]
+
+dat <- cbind(data_frame[, c(rep(FALSE,4), TRUE)])
+
+
+colnames(dat) <- file_names
+
+
+All_joined_countMatrixRemaining <- dat[(-grep("^TE-",rownames(dat))),]
+
+All_joined_countMatrixRemaining$Tosum <- (sapply(strsplit(rownames(All_joined_countMatrixRemaining),"_ENS"),"[[",1))
+
+All_joined_countMatrixRemaining$Tosum <- gsub("\\..*", "", All_joined_countMatrixRemaining$Tosum)
+
+library(data.table)
+
+chalBeV1 <- data.table(All_joined_countMatrixRemaining)
+
+chalBeV1_sum <- chalBeV1[,lapply(.SD,sum),by=Tosum, .SDcols=(colnames(chalBeV1)[-(which(colnames(chalBeV1)=="Tosum"))])]
+
+rownames(chalBeV1_sum) <- (unlist(chalBeV1_sum[,1]))
+
+chalBeV1_sumMatrix <- as.matrix(chalBeV1_sum[,-1])
+
+rownames(chalBeV1_sumMatrix) <- (unlist(chalBeV1_sum[,1]))
+
+head(chalBeV1_sumMatrix)
+
+genes <- chalBeV1_sumMatrix
+
+######## LTR7 family
+head(chalBeV2_sumMatrix)
+head(chalBe)
+colnames(chalBe) <- make.names(colnames(chalBe), unique=T)
+head(chalBe)
+TosumV1 <- gsub("-.*","", gsub("_.*", "", (sapply(strsplit(rownames(chalBe),"TE-"),"[[",2))))
+head(TosumV1)
+length(TosumV1)
+dim(chalbe)
+dim(chalBe)
+
+
+chalBe$Tosum <- TosumV1
+chalBeV2 <- data.table(chalBe)
+chalBeV2_sum <- chalBeV2[,lapply(.SD,mean),by=Tosum, .SDcols=(colnames(chalBeV2)[-(which(colnames(chalBeV2)=="Tosum"))])]
+head(chalBeV2_sum)
+rownames(chalBeV2_sum) <- (unlist(chalBeV2_sum[,1]))
+chalBeV2_sumMatrix <- as.matrix(chalBeV2_sum[,-1])
+head(chalBeV2_sumMatrix)
+rownames(chalBeV2_sumMatrix) <- (unlist(chalBeV2_sum[,1]))
+head(chalBeV2_sumMatrix)
+LTR7_fam <- chalBeV2_sumMatrix
+counts_fam <- (rbind(genes,LTR7_fam))
+countData <- as.data.frame(counts_fam)
+countData$genes <- row.names(countData)
+head(countData)
+countData <- countData[,c(10,1:9)]
+head(countData)
+
